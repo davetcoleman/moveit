@@ -47,6 +47,19 @@
 namespace kinematics_plugin_loader
 {
 
+namespace
+{
+  /**
+   * @brief Convert a boost::shared_ptr to an std::shared_ptr as good as possible.
+   * This is a dangerous conversion that only works in specific cases. Do not use blindly!
+   */
+  template<typename T>
+  std::shared_ptr<T> convert_shared_ptr(boost::shared_ptr<T> && ptr)
+  {
+    return std::shared_ptr<T>(ptr.get(), [ptr](T*) mutable {ptr.reset();});
+  }
+}
+
 class KinematicsPluginLoader::KinematicsLoaderImpl
 {
 public:
@@ -142,7 +155,7 @@ public:
         {
           try
           {
-            result = kinematics_loader_->createInstance(it->second[i]);
+            result = convert_shared_ptr(kinematics_loader_->createInstance(it->second[i]));
             if (result)
             {
               const std::vector<const robot_model::LinkModel*> &links = jmg->getLinkModels();

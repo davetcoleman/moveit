@@ -401,7 +401,7 @@ class MoveItMultiControllerManager : public moveit_controller_manager::MoveItCon
         {  // create MoveItControllerManager if it does not exists
           ROS_INFO_STREAM("Adding controller_manager interface for node at namespace " << ns);
           controller_managers_.insert(
-              std::make_pair(ns, boost::make_shared<moveit_ros_control_interface::MoveItControllerManager>(ns)));
+              std::make_pair(ns, std::make_shared<moveit_ros_control_interface::MoveItControllerManager>(ns)));
         }
       }
     }

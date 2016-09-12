@@ -42,12 +42,15 @@
 #include <moveit/planning_scene/planning_scene.h>
 #include <object_recognition_msgs/TableArray.h>
 #include <moveit_msgs/CollisionObject.h>
+#include <boost/shared_ptr.hpp>
 #include <boost/thread/mutex.hpp>
 #include <moveit/macros/class_forward.h>
 
 namespace shapes
 {
-MOVEIT_CLASS_FORWARD(Shape);
+class Shape;
+typedef boost::shared_ptr<Shape> ShapePtr;
+typedef boost::shared_ptr<const Shape> ShapeConstPtr;
 }
 
 namespace moveit

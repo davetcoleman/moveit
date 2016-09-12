@@ -41,13 +41,16 @@
 #include <vector>
 #include <utility>
 #include <map>
+#include <boost/shared_ptr.hpp>
 #include <Eigen/Geometry>
 #include <eigen_stl_containers/eigen_stl_vector_container.h>
 #include <moveit/macros/class_forward.h>
 
 namespace shapes
 {
-MOVEIT_CLASS_FORWARD(Shape);
+class Shape;
+typedef boost::shared_ptr<Shape> ShapePtr;
+typedef boost::shared_ptr<const Shape> ShapeConstPtr;
 }
 
 namespace moveit

@@ -46,6 +46,19 @@ namespace plan_execution
 {
 using namespace moveit_ros_planning;
 
+namespace
+{
+  /**
+   * @brief Convert a boost::shared_ptr to an std::shared_ptr as good as possible.
+   * This is a dangerous conversion that only works in specific cases. Do not use blindly!
+   */
+  template<typename T>
+  std::shared_ptr<T> convert_shared_ptr(boost::shared_ptr<T> && ptr)
+  {
+    return std::shared_ptr<T>(ptr.get(), [ptr](T*) mutable {ptr.reset();});
+  }
+}
+
 class PlanWithSensing::DynamicReconfigureImpl
 {
 public:
@@ -102,7 +115,7 @@ plan_execution::PlanWithSensing::PlanWithSensing(const trajectory_execution_mana
       if (node_handle_.getParam("moveit_sensor_manager", manager))
         try
         {
-          sensor_manager_ = sensor_manager_loader_->createInstance(manager);
+          sensor_manager_ = convert_shared_ptr(sensor_manager_loader_->createInstance(manager));
         }
         catch(pluginlib::PluginlibException& ex)
         {

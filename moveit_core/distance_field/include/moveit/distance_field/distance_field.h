@@ -42,6 +42,7 @@
 #include <moveit/distance_field/voxel_grid.h>
 #include <vector>
 #include <list>
+#include <boost/shared_ptr.hpp>
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <Eigen/Core>
@@ -51,7 +52,9 @@
 
 namespace shapes
 {
-MOVEIT_CLASS_FORWARD(Shape);
+class Shape;
+typedef boost::shared_ptr<Shape> ShapePtr;
+typedef boost::shared_ptr<const Shape> ShapeConstPtr;
 }
 namespace octomap
 {

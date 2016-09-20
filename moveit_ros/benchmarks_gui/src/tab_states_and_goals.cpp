@@ -62,6 +62,19 @@
 namespace benchmark_tool
 {
 
+namespace
+{
+  /**
+   * @brief Convert a boost::shared_ptr to an std::shared_ptr as good as possible.
+   * This is a dangerous conversion that only works in specific cases. Do not use blindly!
+   */
+  template<typename T>
+  std::shared_ptr<T> convert_shared_ptr(boost::shared_ptr<T> && ptr)
+  {
+    return std::shared_ptr<T>(ptr.get(), [ptr](T*) mutable {ptr.reset();});
+  }
+}
+
 void MainWindow::createGoalAtPose(const std::string &name, const Eigen::Affine3d &pose)
 {
   goals_initial_pose_.insert(std::pair<std::string, Eigen::Affine3d>(name, pose));
@@ -971,7 +984,7 @@ void MainWindow::runBenchmark(void)
       ROS_DEBUG("Attempting to load and configure %s", classes[i].c_str());
       try
       {
-        planning_interface::PlannerManagerPtr p = planner_plugin_loader->createInstance(classes[i]);
+        planning_interface::PlannerManagerPtr p = convert_shared_ptr(planner_plugin_loader->createInstance(classes[i]));
         p->initialize(scene_display_->getPlanningSceneRO()->getRobotModel(), "");
         planner_interfaces[classes[i]] = p;
       }

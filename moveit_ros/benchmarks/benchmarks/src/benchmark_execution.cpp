@@ -90,6 +90,16 @@ void checkHeader(moveit_msgs::Constraints &c, const std::string &header_frame)
     }
 }
 
+/**
+ * @brief Convert a boost::shared_ptr to an std::shared_ptr as good as possible.
+ * This is a dangerous conversion that only works in specific cases. Do not use blindly!
+ */
+template<typename T>
+std::shared_ptr<T> convert_shared_ptr(boost::shared_ptr<T> && ptr)
+{
+  return std::shared_ptr<T>(ptr.get(), [ptr](T*) mutable {ptr.reset();});
+}
+
 }
 }
 
@@ -118,7 +128,7 @@ moveit_benchmarks::BenchmarkExecution::BenchmarkExecution(const planning_scene::
     ROS_INFO("Attempting to load and configure %s", classes[i].c_str());
     try
     {
-      planning_interface::PlannerManagerPtr p = planner_plugin_loader_->createInstance(classes[i]);
+      planning_interface::PlannerManagerPtr p = convert_shared_ptr(planner_plugin_loader_->createInstance(classes[i]));
       p->initialize(planning_scene_->getRobotModel(), "");
       planner_interfaces_[classes[i]] = p;
     }

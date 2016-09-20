@@ -37,7 +37,6 @@
 #include <moveit/collision_distance_field/collision_world_distance_field.h>
 #include <moveit/collision_distance_field/collision_common_distance_field.h>
 #include <moveit/distance_field/propagation_distance_field.h>
-#include <boost/make_shared.hpp>
 #include <boost/bind.hpp>
 
 namespace collision_detection
@@ -503,7 +502,7 @@ void CollisionWorldDistanceField::updateDistanceObject(const std::string& id,
       BodyDecompositionConstPtr bd = getBodyDecompositionCacheEntry(object->shapes_[i],
                                                                     resolution_);
       
-      shape_points.push_back(boost::make_shared<PosedBodyPointDecomposition>(bd, object->shape_poses_[i]));
+      shape_points.push_back(std::make_shared<PosedBodyPointDecomposition>(bd, object->shape_poses_[i]));
       add_points.insert(add_points.end(),
                         shape_points.back()->getCollisionPoints().begin(),
                         shape_points.back()->getCollisionPoints().end());

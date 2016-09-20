@@ -72,6 +72,19 @@ bool checkTimeout(ros::Time &t, double timeout, bool force = false)
   return false;
 }
 
+namespace
+{
+  /**
+   * @brief Convert a boost::shared_ptr to an std::shared_ptr as good as possible.
+   * This is a dangerous conversion that only works in specific cases. Do not use blindly!
+   */
+  template<typename T>
+  std::shared_ptr<T> convert_shared_ptr(boost::shared_ptr<T> && ptr)
+  {
+    return std::shared_ptr<T>(ptr.get(), [ptr](T*) mutable {ptr.reset();});
+  }
+}
+
 MOVEIT_CLASS_FORWARD(MoveItControllerManager);
 
 /**
@@ -151,7 +164,7 @@ class MoveItControllerManager : public moveit_controller_manager::MoveItControll
       AllocatorsMap::iterator alloc_it = allocators_.find(type);
       if (alloc_it == allocators_.end())
       {  // create allocator is needed
-        alloc_it = allocators_.insert(std::make_pair(type, loader_.createInstance(type))).first;
+        alloc_it = allocators_.insert(std::make_pair(type, convert_shared_ptr(loader_.createInstance(type)))).first;
       }
 
       // Collect claimed resources across different hardware interfaces
@@ -401,7 +414,7 @@ class MoveItMultiControllerManager : public moveit_controller_manager::MoveItCon
         {  // create MoveItControllerManager if it does not exists
           ROS_INFO_STREAM("Adding controller_manager interface for node at namespace " << ns);
           controller_managers_.insert(
-              std::make_pair(ns, boost::make_shared<moveit_ros_control_interface::MoveItControllerManager>(ns)));
+              std::make_pair(ns, std::make_shared<moveit_ros_control_interface::MoveItControllerManager>(ns)));
         }
       }
     }

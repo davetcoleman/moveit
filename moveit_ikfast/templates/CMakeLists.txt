@@ -3,6 +3,7 @@ project(_PACKAGE_NAME_)
 
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
+  moveit_ikfast
   pluginlib
   roscpp
   tf_conversions
@@ -14,6 +15,7 @@ catkin_package(
   LIBRARIES
   CATKIN_DEPENDS
     moveit_core
+    moveit_ikfast
     pluginlib
     roscpp
     tf_conversions

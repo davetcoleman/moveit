@@ -72,7 +72,7 @@ if __name__ == '__main__':
          print "Warning: The default search has changed from OPTIMIZE_FREE_JOINT to now %s!" % (search_mode)
          ikfast_output_file = sys.argv[4]
       else:
-         raise Exception()  
+         raise Exception()
    except:
       print("\nUsage: create_ikfast_plugin.py <yourrobot_name> <planning_group_name> <moveit_plugin_pkg> [<search_mode>] <ikfast_output_path>\n")
       sys.exit(-1)
@@ -277,8 +277,8 @@ if __name__ == '__main__':
    package_xml = etree.parse(package_file_name, parser)
 
    # Make sure at least all required dependencies are in the depends lists
-   build_deps = ["liblapack-dev", "moveit_core", "pluginlib", "roscpp", "tf_conversions"]
-   run_deps   = ["liblapack-dev", "moveit_core", "pluginlib", "roscpp", "tf_conversions"]
+   build_deps = ["liblapack-dev", "moveit_core", "pluginlib", "roscpp", "tf_conversions", "moveit_ikfast"]
+   run_deps   = ["liblapack-dev", "moveit_core", "pluginlib", "roscpp", "tf_conversions", "moveit_ikfast"]
 
    def update_deps(reqd_deps, req_type, e_parent):
       curr_deps = [e.text for e in e_parent.findall(req_type)]
@@ -327,11 +327,10 @@ if __name__ == '__main__':
    easy_script_file_name = "update_ikfast_plugin.sh"
    easy_script_file_path = plugin_pkg_dir + "/" + easy_script_file_name
    with open(easy_script_file_path,'w') as f:
-      f.write("rosrun moveit_ikfast create_ikfast_moveit_plugin.py" 
-              + " " + robot_name 
-              + " " + planning_group_name 
+      f.write("rosrun moveit_ikfast create_ikfast_moveit_plugin.py"
+              + " " + robot_name
+              + " " + planning_group_name
               + " " + plugin_pkg
               + " " + solver_file_name )
-              
-   print '\nCreated update plugin script at '+easy_script_file_path
 
+   print '\nCreated update plugin script at '+easy_script_file_path

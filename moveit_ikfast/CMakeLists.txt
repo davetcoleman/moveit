@@ -3,8 +3,14 @@ project(moveit_ikfast)
 
 find_package(catkin REQUIRED)
 
-catkin_package()
+catkin_package(
+  INCLUDE_DIRS include
+)
 
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
 
 #############
 ## Install ##
@@ -13,10 +19,10 @@ catkin_package()
 #catkin_python_setup()
 
 install(
-  PROGRAMS 
+  PROGRAMS
     scripts/create_ikfast_moveit_plugin.py
     scripts/round_collada_numbers.py
-  DESTINATION 
+  DESTINATION
     ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -25,4 +31,9 @@ install(
     templates
   DESTINATION
     ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+# Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )

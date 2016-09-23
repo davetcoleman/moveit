@@ -18,3 +18,7 @@ install(
   DESTINATION
     ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+install(DIRECTORY include/ikfast_kinematics_plugin/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)

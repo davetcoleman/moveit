@@ -19,5 +19,6 @@ install(
     ${CATKIN_PACKAGE_SHARE_DESTINATION}/ikfast_kinematics_plugin
 )
 
-# The ikfast plugin has an exported header file used by generated ikfast solvers
-install(DIRECTORY include/ DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})
+install(DIRECTORY include/ikfast_kinematics_plugin/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)

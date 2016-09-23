@@ -29,6 +29,7 @@ set(THIS_PACKAGE_INCLUDE_DIRS
     kdl_kinematics_plugin/include
     lma_kinematics_plugin/include
     srv_kinematics_plugin/include
+    ikfast_kinematics_plugin/include
 )
 
 catkin_package(
@@ -64,4 +65,5 @@ install(
     lma_kinematics_plugin_description.xml
     srv_kinematics_plugin_description.xml
   DESTINATION
-    ${CATKIN_PACKAGE_SHARE_DESTINATION})
+    ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)

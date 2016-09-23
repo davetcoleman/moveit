@@ -18,3 +18,6 @@ install(
   DESTINATION
     ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
+
+# The ikfast plugin has an exported header file used by generated ikfast solvers
+install(DIRECTORY include/ DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})

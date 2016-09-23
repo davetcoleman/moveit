@@ -29,6 +29,7 @@ set(THIS_PACKAGE_INCLUDE_DIRS
     kdl_kinematics_plugin/include
     lma_kinematics_plugin/include
     srv_kinematics_plugin/include
+    ikfast_kinematics_plugin/include
 )
 
 catkin_package(
@@ -66,6 +67,3 @@ install(
   DESTINATION
     ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
-
-# The ikfast plugin has an exported header file used by generated ikfast solvers
-install(DIRECTORY ikfast_kinematics_plugin/include DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})

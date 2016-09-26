@@ -798,6 +798,52 @@ bool moveit::core::RobotState::isValidVelocityMove(const RobotState& other, cons
       if (dtheta > dt * bounds[var_id].max_velocity_)
         return false;
     }
+
+bool moveit::core::RobotState::isValidVelocityMove(const JointModelGroup* group,
+                                                   const std::vector<double>& from_joint_pose,
+                                                   const std::vector<double>& to_joint_pose, double dt) const
+{
+  // Check for equal sized arrays
+  if (from_joint_pose.size() != to_joint_pose.size())
+  {
+    logError("To and from joint poses are of different sizes.");
+    return false;
+  }
+
+  return isValidVelocityMove(group, &from_joint_pose[0], &to_joint_pose[0], from_joint_pose.size(), dt);
+}
+
+bool moveit::core::RobotState::isValidVelocityMove(const JointModelGroup* group, const double* from_joint_pose,
+                                                   const double* to_joint_pose, std::size_t array_size, double dt) const
+
+{
+  const std::vector<const JointModel::Bounds*>& bounds = group->getActiveJointModelsBounds();
+  const std::vector<unsigned int>& bij = group->getKinematicsSolverJointBijection();
+
+  for (std::size_t i = 0; i < array_size; ++i)
+  {
+    double dtheta = std::abs(from_joint_pose[i] - to_joint_pose[i]);
+    //double max_dtheta = dt * velocity_limits_[i];
+
+    // std::cout << "i: " << i << std::endl;
+    // std::cout << "bij[i] " << bij[i] << std::endl;
+
+    const std::vector<moveit::core::VariableBounds>* var_bounds = bounds[bij[i]];
+
+    if (var_bounds->size() != 1)
+    {
+      logError("Attempting to check velocity bounds for waypoint move with joints that have multiple variables");
+      return false;
+    }
+
+    // std::cout << "bounds[bij[i]]->size(): " << var_bounds->size() << std::endl;
+    // std::cout << "bounds[bij[i]][0]: " << (*var_bounds)[0].max_velocity_ << std::endl;
+
+    const double max_velocity = (*var_bounds)[0].max_velocity_;
+
+    double max_dtheta = dt * max_velocity;
+    if (dtheta > max_dtheta)
+      return false;
   }
 
   return true;

@@ -52,9 +52,9 @@ catkin_package(
     moveit_planning_scene_interface
     moveit_move_group_interface
   INCLUDE_DIRS
+    ${EIGEN3_INCLUDE_DIRS}
     ${THIS_PACKAGE_INCLUDE_DIRS}
   CATKIN_DEPENDS
-    EIGEN3
     moveit_ros_planning
     moveit_ros_warehouse
     moveit_ros_manipulation

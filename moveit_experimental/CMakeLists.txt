@@ -62,7 +62,6 @@ catkin_package(
     kdl_parser
     pluginlib
   DEPENDS
-    EIGEN3
     Boost
     urdfdom
     urdfdom_headers

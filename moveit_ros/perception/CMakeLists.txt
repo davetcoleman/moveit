@@ -4,7 +4,6 @@ project(moveit_ros_perception)
 add_compile_options(-std=c++11)
 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
-  message("${PROJECT_NAME}: You did not request a specific build type: Choosing 'Release' for maximum performance")
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
@@ -55,6 +54,7 @@ catkin_package(
     occupancy_map_monitor/include
     pointcloud_octomap_updater/include
     semantic_world/include
+    ${EIGEN3_INCLUDE_DIRS}
     ${OCTOMAP_INCLUDE_DIRS}
   LIBRARIES
     moveit_lazy_free_space_updater
@@ -66,10 +66,7 @@ catkin_package(
   CATKIN_DEPENDS
     moveit_core
     image_transport
-    moveit_msgs
-  DEPENDS
-    EIGEN3
-)
+    moveit_msgs)
 
 include_directories(mesh_filter/include
                     lazy_free_space_updater/include

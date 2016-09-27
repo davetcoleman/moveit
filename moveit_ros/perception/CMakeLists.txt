@@ -4,6 +4,7 @@ project(moveit_ros_perception)
 add_compile_options(-std=c++11)
 
 if(NOT CMAKE_CONFIGURATION_TYPES AND NOT CMAKE_BUILD_TYPE)
+  message("${PROJECT_NAME}: You did not request a specific build type: Choosing 'Release' for maximum performance")
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
@@ -35,8 +36,9 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   moveit_msgs
 )
+find_package(Eigen3 REQUIRED)
+
 find_package(PkgConfig REQUIRED)
-pkg_search_module(EIGEN3 REQUIRED eigen3)
 
 find_package(OpenMP)
 find_package(octomap REQUIRED)
@@ -60,10 +62,12 @@ catkin_package(
     moveit_semantic_world
     ${OCTOMAP_LIBRARIES}
   CATKIN_DEPENDS
-    EIGEN3
     moveit_core
     image_transport
-    moveit_msgs)
+    moveit_msgs
+  DEPENDS
+    EIGEN3
+)
 
 include_directories(mesh_filter/include
                     lazy_free_space_updater/include

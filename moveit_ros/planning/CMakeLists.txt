@@ -22,8 +22,9 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
 )
+find_package(Eigen3 REQUIRED)
+
 find_package(PkgConfig REQUIRED)
-pkg_search_module(EIGEN3 REQUIRED eigen3)
 
 generate_dynamic_reconfigure_options(
   "planning_scene_monitor/cfg/PlanningSceneMonitorDynamicReconfigure.cfg"
@@ -57,10 +58,11 @@ catkin_package(
   INCLUDE_DIRS
     ${THIS_PACKAGE_INCLUDE_DIRS}
   CATKIN_DEPENDS
-    EIGEN3
     pluginlib
     moveit_core
     moveit_ros_perception
+  DEPENDS
+    EIGEN3
 )
 
 include_directories(${THIS_PACKAGE_INCLUDE_DIRS}

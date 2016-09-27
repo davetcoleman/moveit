@@ -55,9 +55,9 @@ catkin_package(
     moveit_planning_scene_monitor
     moveit_collision_plugin_loader
   INCLUDE_DIRS
-    ${EIGEN3_INCLUDE_DIRS}
     ${THIS_PACKAGE_INCLUDE_DIRS}
   CATKIN_DEPENDS
+    EIGEN3
     pluginlib
     moveit_core
     moveit_ros_perception

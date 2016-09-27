@@ -65,11 +65,11 @@ catkin_package(
     planning_scene_rviz_plugin/include
     motion_planning_rviz_plugin/include
     trajectory_rviz_plugin/include
-    ${EIGEN3_INCLUDE_DIRS}
   CATKIN_DEPENDS
+    EIGEN3
     moveit_ros_planning_interface
     moveit_ros_robot_interaction
-    )
+  )
 
 catkin_install_python(PROGRAMS scripts/moveit_joy.py DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 catkin_python_setup()

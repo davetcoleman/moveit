@@ -51,7 +51,6 @@ catkin_package(
     occupancy_map_monitor/include
     pointcloud_octomap_updater/include
     semantic_world/include
-    ${EIGEN3_INCLUDE_DIRS}
     ${OCTOMAP_INCLUDE_DIRS}
   LIBRARIES
     moveit_lazy_free_space_updater
@@ -61,6 +60,7 @@ catkin_package(
     moveit_semantic_world
     ${OCTOMAP_LIBRARIES}
   CATKIN_DEPENDS
+    EIGEN3
     moveit_core
     image_transport
     moveit_msgs)

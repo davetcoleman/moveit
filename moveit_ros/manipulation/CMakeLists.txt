@@ -29,13 +29,13 @@ catkin_package(
   INCLUDE_DIRS
     pick_place/include
     move_group_pick_place_capability/include
+    ${EIGEN3_INCLUDE_DIRS}
   LIBRARIES
     moveit_pick_place_planner
   CATKIN_DEPENDS
-    EIGEN3
     moveit_core
     moveit_ros_planning
-  )
+    )
 
 include_directories(pick_place/include)
 include_directories(move_group_pick_place_capability/include)

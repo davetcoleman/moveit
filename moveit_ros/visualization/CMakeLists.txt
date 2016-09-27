@@ -75,6 +75,7 @@ catkin_package(
     motion_planning_rviz_plugin/include
     trajectory_rviz_plugin/include
   CATKIN_DEPENDS
+    EIGEN3
     moveit_ros_planning_interface
     moveit_ros_robot_interaction
   DEPENDS

@@ -36,6 +36,7 @@ catkin_package(
   LIBRARIES
     moveit_pick_place_planner
   CATKIN_DEPENDS
+    EIGEN3
     moveit_core
     moveit_ros_planning
   DEPENDS

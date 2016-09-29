@@ -29,7 +29,6 @@ set(THIS_PACKAGE_INCLUDE_DIRS
     kdl_kinematics_plugin/include
     lma_kinematics_plugin/include
     srv_kinematics_plugin/include
-    ikfast_kinematics_plugin/include
 )
 
 catkin_package(

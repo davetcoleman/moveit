@@ -65,4 +65,8 @@ install(
     lma_kinematics_plugin_description.xml
     srv_kinematics_plugin_description.xml
   DESTINATION
-    ${CATKIN_PACKAGE_SHARE_DESTINATION})
+    ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
+
+# The ikfast plugin has an exported header file used by generated ikfast solvers
+install(DIRECTORY ikfast_kinematics_plugin/include DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION})

@@ -77,15 +77,14 @@ rdf_loader::RDFLoader::RDFLoader(const std::string& robot_description)
   std::string scontent;
   if (!nh.getParam(srdf_description, scontent))
   {
-    ROS_ERROR_NAMED("rdf_loader", "Robot semantic description not found. Did you forget to define or remap '%s'?",
-                    srdf_description.c_str());
+    ROS_ERROR_NAMED("rdf_loader", "Robot semantic description not found. Did you forget to define or remap '%s'?", srdf_description.c_str());
     return;
   }
 
   srdf_.reset(new srdf::Model());
   if (!srdf_->initString(*urdf_, scontent))
   {
-    ROS_ERROR_NAMED("rdf_loader", "Unable to parse SRDF from parameter '%s'", srdf_description.c_str());
+    ROS_ERROR_NAMED("rdf_loader", "Unable to parse SRDF from parameter '%s'", srdf_description.c_str() );
     srdf_.reset();
     return;
   }
@@ -141,10 +140,8 @@ rdf_loader::RDFLoader::RDFLoader(TiXmlDocument* urdf_doc, TiXmlDocument* srdf_do
 
 bool rdf_loader::RDFLoader::isXacroFile(const std::string& path)
 {
-  std::string lower_path = path;
-  std::transform(lower_path.begin(), lower_path.end(), lower_path.begin(), ::tolower);
-
-  return lower_path.find(".xacro") != std::string::npos;
+  // TODO: implement case-insensitive search
+  return path.find(".xacro") != std::string::npos;
 }
 
 bool rdf_loader::RDFLoader::loadFileToString(std::string& buffer, const std::string& path)
@@ -178,22 +175,13 @@ bool rdf_loader::RDFLoader::loadFileToString(std::string& buffer, const std::str
   return true;
 }
 
-bool rdf_loader::RDFLoader::loadXacroFileToString(std::string& buffer, const std::string& path,
-                                                  const std::vector<std::string>& xacro_args)
+bool rdf_loader::RDFLoader::loadXacroFileToString(std::string& buffer, const std::string& path, const std::vector<std::string>& xacro_args)
 {
   if (path.empty())
-  {
-    ROS_ERROR_NAMED("rdf_loader", "Path is empty");
     return false;
-  }
 
-  if (!boost::filesystem::exists(path))
-  {
-    ROS_ERROR_NAMED("rdf_loader", "File does not exist");
-    return false;
-  }
+  std::string cmd = "rosrun xacro xacro ";
 
-  std::string cmd = "rosrun xacro xacro --inorder ";
   for (std::vector<std::string>::const_iterator it = xacro_args.begin(); it != xacro_args.end(); ++it)
     cmd += *it + " ";
   cmd += path;
@@ -216,8 +204,7 @@ bool rdf_loader::RDFLoader::loadXacroFileToString(std::string& buffer, const std
   return true;
 }
 
-bool rdf_loader::RDFLoader::loadXmlFileToString(std::string& buffer, const std::string& path,
-                                                const std::vector<std::string>& xacro_args)
+bool rdf_loader::RDFLoader::loadXmlFileToString(std::string& buffer, const std::string& path, const std::vector<std::string>& xacro_args)
 {
   if (isXacroFile(path))
   {
@@ -242,6 +229,12 @@ bool rdf_loader::RDFLoader::loadPkgFileToString(std::string& buffer, const std::
   boost::filesystem::path path(package_path);
   // Use boost to cross-platform combine paths
   path = path / relative_path;
+
+  if (!boost::filesystem::exists(path))
+  {
+    ROS_ERROR_NAMED("rdf_loader", "File does not exist");
+    return false;
+  }
 
   return loadXmlFileToString(buffer, path.string(), xacro_args);
 }

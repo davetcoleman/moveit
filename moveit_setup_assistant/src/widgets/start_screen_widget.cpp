@@ -55,9 +55,9 @@
 #include <fstream>  // for reading in urdf
 #include <streambuf>
 // Boost
-#include <boost/algorithm/string.hpp>  // for trimming whitespace from user input
-#include <boost/filesystem.hpp>        // for reading folders/files
-#include <boost/algorithm/string.hpp>  // for string find and replace in paths
+#include <boost/algorithm/string.hpp> // for trimming whitespace from user input
+#include <boost/filesystem.hpp>  // for reading folders/files
+#include <boost/algorithm/string.hpp> // for string find and replace in paths
 // MoveIt
 #include <moveit/rdf_loader/rdf_loader.h>
 
@@ -494,7 +494,7 @@ bool StartScreenWidget::loadNewFiles()
 // ******************************************************************************************
 bool StartScreenWidget::loadURDFFile(const std::string& urdf_file_path)
 {
-  const std::vector<std::string> xacro_args;  // TODO: somehow allow arguments to be passed in when parsing xacro URDFs
+  const std::vector<std::string> xacro_args; // TODO: somehow allow arguments to be passed in when parsing xacro URDFs
 
   std::string urdf_string;
   if (!rdf_loader::RDFLoader::loadXmlFileToString(urdf_string, urdf_file_path, xacro_args))
@@ -542,7 +542,7 @@ bool StartScreenWidget::loadSRDFFile(const std::string& srdf_file_path)
   std::string srdf_string;
   if (!rdf_loader::RDFLoader::loadXmlFileToString(srdf_string, srdf_file_path, xacro_args))
   {
-    QMessageBox::warning(this, "Error Loading Files", QString("SRDF file not found: ").append(srdf_file_path.c_str()));
+    QMessageBox::warning( this, "Error Loading Files", QString( "SRDF file not found: " ).append( srdf_file_path.c_str() ) );
     return false;
   }
 

@@ -662,25 +662,18 @@ bool moveit::core::RobotState::isValidVelocityMove(const RobotState &other, cons
                                                    double dt) const
 {
   const std::vector<const JointModel*> &jm = group->getActiveJointModels();
-  for (std::size_t i = 0 ; i < jm.size() ; ++i)
+  for (std::size_t joint_id = 0 ; joint_id < jm.size() ; ++joint_id)
   {
-    if (jm[i]->getVariableCount() != 1)
+    const int idx = jm[joint_id]->getFirstVariableIndex();
+    const std::vector<moveit::core::VariableBounds>& bounds = jm[joint_id]->getVariableBounds();
+
+    // Check velocity for each joint variable
+    for (std::size_t var_id = 0; var_id < jm[joint_id]->getVariableCount(); ++var_id)
     {
-      logError("Attempting to check velocity bounds with joints that have multiple variables (not implemented)");
-      return false;
-    }
-    const int idx = jm[i]->getFirstVariableIndex();
-    double dtheta = std::abs(*(position_ + idx) - *(other.getVariablePositions() + idx));
+      double dtheta = std::abs(*(position_ + idx + var_id) - *(other.getVariablePositions() + idx + var_id));
 
-    const std::vector<moveit::core::VariableBounds>& bounds = jm[i]->getVariableBounds();
-
-    double max_dtheta = dt * bounds.front().max_velocity_;
-
-    if (dtheta > max_dtheta)
-    {
-      std::cout << "i: " << i << " joint model " << jm[i]->getName() << " max_dtheta: " << max_dtheta
-                << " dtheta: " << dtheta << std::endl;
-      return false;
+      if (dtheta > dt * bounds[var_id].max_velocity_)
+        return false;
     }
   }
 

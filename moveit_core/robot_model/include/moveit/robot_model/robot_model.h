@@ -198,6 +198,15 @@ public:
     return mimic_joints_;
   }
 
+  /** \brief Get the array of virtual joint models in the robot state.
+   *         Virtual joints == [PLANAR|FLOATING|FIXED]
+   *  \return list of virtual joint models
+   */
+  const std::vector<const JointModel *> &getVirtualJointModels() const
+  {
+    return virtual_joints_;
+  }
+
   const JointModel *getJointOfVariable(int variable_index) const
   {
     return joints_of_variable_[variable_index];
@@ -501,9 +510,14 @@ protected:
   /** \brief The set of mimic joints this model contains */
   std::vector<const JointModel *> mimic_joints_;
 
+  /** \brief The set of single DOF joints this model contains */
   std::vector<const JointModel *> single_dof_joints_;
 
+  /** \brief The set of multi DOF joints this model contains */
   std::vector<const JointModel *> multi_dof_joints_;
+
+  /** \brief The set of virtual joints this model contains */
+  std::vector<const JointModel *> virtual_joints_;
 
   /** \brief For every two joints, the index of the common root for thw joints is stored.
 

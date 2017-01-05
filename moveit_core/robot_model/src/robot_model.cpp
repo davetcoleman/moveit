@@ -280,13 +280,21 @@ void moveit::core::RobotModel::buildJointInfo()
         active_joint_models_bounds_.push_back(&joint_model_vector_[i]->getVariableBounds());
       }
 
+      // keep track of continuous joints
       if (joint_model_vector_[i]->getType() == JointModel::REVOLUTE &&
           static_cast<const RevoluteJointModel *>(joint_model_vector_[i])->isContinuous())
         continuous_joint_model_vector_.push_back(joint_model_vector_[i]);
 
+      // keep track of virtual joints
+      if (joint_model_vector_[i]->getType() == JointModel::PLANAR ||
+          joint_model_vector_[i]->getType() == JointModel::FLOATING ||
+          joint_model_vector_[i]->getType() == JointModel::FIXED)
+        virtual_joints_.push_back(joint_model_vector_[i]);
+
       joint_model_vector_[i]->setFirstVariableIndex(variable_count_);
       joint_variables_index_map_[joint_model_vector_[i]->getName()] = variable_count_;
 
+      // keep track of single and multi dof joints
       // compute variable count
       std::size_t vc = joint_model_vector_[i]->getVariableCount();
       variable_count_ += vc;
@@ -926,7 +934,10 @@ moveit::core::JointModel *moveit::core::RobotModel::constructJointModel(const ur
         }
       }
     }
-    if (!result)
+    if (result) // save virtual joint
+    {
+      virtual_joints_.push_back(result);
+    }
     {
       logInform("No root/virtual joint specified in SRDF. Assuming fixed joint");
       result = new FixedJointModel("ASSUMED_FIXED_ROOT_JOINT");

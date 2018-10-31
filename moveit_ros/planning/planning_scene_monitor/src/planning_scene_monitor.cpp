@@ -1038,9 +1038,9 @@ void planning_scene_monitor::PlanningSceneMonitor::startWorldGeometryMonitor(
     const bool load_octomap_monitor)
 {
   stopWorldGeometryMonitor();
-  ROS_INFO_NAMED(LOGNAME, "Starting world geometry monitor");
+  ROS_INFO_NAMED(LOGNAME, "Starting world geometry update monitor for collision objects, attached objects, octomap updates.");
 
-  // listen for world geometry updates using message filters
+  // Listen to the /collision_objects topic to detect requests to add/remove/update collision objects to/from the world
   if (!collision_objects_topic.empty())
   {
     collision_object_subscriber_.reset(
@@ -1058,6 +1058,7 @@ void planning_scene_monitor::PlanningSceneMonitor::startWorldGeometryMonitor(
     }
     else
     {
+      ROS_ERROR_STREAM_NAMED(LOGNAME, "No tf loaded... why?");
       collision_object_subscriber_->registerCallback(
           boost::bind(&PlanningSceneMonitor::collisionObjectCallback, this, _1));
       ROS_INFO_NAMED(LOGNAME, "Listening to '%s'", root_nh_.resolveName(collision_objects_topic).c_str());

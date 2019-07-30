@@ -57,11 +57,53 @@
 #include <memory>
 #include <tf2_ros/buffer.h>
 
+// Copied from .cpp file
+#include <moveit/warehouse/constraints_storage.h>
+#include <moveit/kinematic_constraints/utils.h>
+#include <moveit/move_group/capability_names.h>
+#include <moveit/move_group_pick_place_capability/capability_names.h>
+#include <moveit/planning_scene_monitor/current_state_monitor.h>
+#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit/trajectory_execution_manager/trajectory_execution_manager.h>
+#include <moveit/common_planning_interface_objects/common_objects.h>
+#include <moveit/robot_state/conversions.h>
+#include <moveit_msgs/PickupAction.h>
+#include <moveit_msgs/ExecuteTrajectoryAction.h>
+#include <moveit_msgs/PlaceAction.h>
+#include <moveit_msgs/ExecuteKnownTrajectory.h>
+#include <moveit_msgs/QueryPlannerInterfaces.h>
+#include <moveit_msgs/GetCartesianPath.h>
+#include <moveit_msgs/GraspPlanning.h>
+#include <moveit_msgs/GetPlannerParams.h>
+#include <moveit_msgs/SetPlannerParams.h>
+
+#include <std_msgs/String.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <tf2/utils.h>
+#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_ros/transform_listener.h>
+#include <ros/console.h>
+#include <ros/ros.h>
+
+#include <stdexcept>
+#include <sstream>
+#include <memory>
+
 namespace moveit
 {
 /** \brief Simple interface to MoveIt! components */
 namespace planning_interface
 {
+
+enum ActiveTargetType
+{
+  JOINT,
+  POSE,
+  POSITION,
+  ORIENTATION
+};
+
 class MoveItErrorCode : public moveit_msgs::MoveItErrorCodes
 {
 public:
@@ -91,20 +133,20 @@ public:
   }
 };
 
-MOVEIT_CLASS_FORWARD(MoveGroupInterface);
+MOVEIT_CLASS_FORWARD(MoveItCpp);
 
-/** \class MoveGroupInterface moveit_cpp.h moveit/planning_interface/moveit_cpp.h
+/** \class MoveItCpp moveit_cpp.h moveit/planning_interface/moveit_cpp.h
 
     \brief Client class to conveniently use the ROS interfaces provided by the move_group node.
 
     This class includes many default settings to make things easy to use. */
-class MoveGroupInterface
+class MoveItCpp
 {
 public:
   /** \brief Default ROS parameter name from where to read the robot's URDF. Set to 'robot_description' */
   static const std::string ROBOT_DESCRIPTION;
 
-  /** \brief Specification of options to use when constructing the MoveGroupInterface class */
+  /** \brief Specification of options to use when constructing the MoveItCpp class */
   struct Options
   {
     Options(const std::string& group_name, const std::string& desc = ROBOT_DESCRIPTION,
@@ -141,19 +183,19 @@ public:
   };
 
   /**
-      \brief Construct a MoveGroupInterface instance call using a specified set of options \e opt.
+      \brief Construct a MoveItCpp instance call using a specified set of options \e opt.
 
-      \param opt. A MoveGroupInterface::Options structure, if you pass a ros::NodeHandle with a specific callback queue,
+      \param opt. A MoveItCpp::Options structure, if you pass a ros::NodeHandle with a specific callback queue,
      it has to be of type ros::CallbackQueue
         (which is the default type of callback queues used in ROS)
       \param tf_buffer. Specify a TF2_ROS Buffer instance to use. If not specified,
                         one will be constructed internally along with an internal TF2_ROS TransformListener
       \param wait_for_servers. Timeout for connecting to action servers. Zero time means unlimited waiting.
     */
-  MoveGroupInterface(const Options& opt,
+  MoveItCpp(const Options& opt,
                      const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
                      const ros::WallDuration& wait_for_servers = ros::WallDuration());
-  MOVEIT_DEPRECATED MoveGroupInterface(const Options& opt, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
+  MOVEIT_DEPRECATED MoveItCpp(const Options& opt, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
                                        const ros::Duration& wait_for_servers);
 
   /**
@@ -163,24 +205,24 @@ public:
                         one will be constructed internally along with an internal TF2_ROS TransformListener
       \param wait_for_servers. Timeout for connecting to action servers. Zero time means unlimited waiting.
     */
-  MoveGroupInterface(const std::string& group,
+  MoveItCpp(const std::string& group,
                      const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
                      const ros::WallDuration& wait_for_servers = ros::WallDuration());
-  MOVEIT_DEPRECATED MoveGroupInterface(const std::string& group, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
+  MOVEIT_DEPRECATED MoveItCpp(const std::string& group, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
                                        const ros::Duration& wait_for_servers);
 
-  ~MoveGroupInterface();
+  ~MoveItCpp();
 
   /**
    * @brief This class owns unique resources (e.g. action clients, threads) and its not very
    * meaningful to copy. Pass by references, move it, or simply create multiple instances where
    * required.
    */
-  MoveGroupInterface(const MoveGroupInterface&) = delete;
-  MoveGroupInterface& operator=(const MoveGroupInterface&) = delete;
+  MoveItCpp(const MoveItCpp&) = delete;
+  MoveItCpp& operator=(const MoveItCpp&) = delete;
 
-  MoveGroupInterface(MoveGroupInterface&& other);
-  MoveGroupInterface& operator=(MoveGroupInterface&& other);
+  MoveItCpp(MoveItCpp&& other);
+  MoveItCpp& operator=(MoveItCpp&& other);
 
   /** \brief Get the name of the group this instance operates on */
   const std::string& getName() const;
@@ -712,7 +754,7 @@ public:
       This call is not blocking (does not wait for the execution of the trajectory to complete). */
   MoveItErrorCode asyncMove();
 
-  /** \brief Get the move_group action client used by the \e MoveGroupInterface.
+  /** \brief Get the move_group action client used by the \e MoveItCpp.
       The client can be used for querying the execution state of the trajectory and abort trajectory execution
       during asynchronous execution. */
   actionlib::SimpleActionClient<moveit_msgs::MoveGroupAction>& getMoveGroupClient() const;
@@ -968,7 +1010,7 @@ public:
   /** \brief Get the names of the known constraints as read from the Mongo database, if a connection was achieved. */
   std::vector<std::string> getKnownConstraints() const;
 
-  /** \brief Get the actual set of constraints in use with this MoveGroupInterface.
+  /** \brief Get the actual set of constraints in use with this MoveItCpp.
       @return A copy of the current path constraints set for this interface
       */
   moveit_msgs::Constraints getPathConstraints() const;
@@ -999,8 +1041,50 @@ protected:
 
 private:
   std::map<std::string, std::vector<double> > remembered_joint_values_;
-  class MoveGroupInterfaceImpl;
-  MoveGroupInterfaceImpl* impl_;
+
+  Options opt_;
+  ros::NodeHandle node_handle_;
+  std::shared_ptr<tf2_ros::Buffer> tf_buffer_;
+  robot_model::RobotModelConstPtr robot_model_;
+  planning_scene_monitor::CurrentStateMonitorPtr current_state_monitor_;
+
+  // general planning params
+  robot_state::RobotStatePtr considered_start_state_;
+  moveit_msgs::WorkspaceParameters workspace_parameters_;
+  double allowed_planning_time_;
+  std::string planner_id_;
+  unsigned int num_planning_attempts_;
+  double max_velocity_scaling_factor_;
+  double max_acceleration_scaling_factor_;
+  double goal_joint_tolerance_;
+  double goal_position_tolerance_;
+  double goal_orientation_tolerance_;
+  bool can_look_;
+  bool can_replan_;
+  double replan_delay_;
+
+  // joint state goal
+  robot_state::RobotStatePtr joint_state_target_;
+  const robot_model::JointModelGroup* joint_model_group_;
+
+  // pose goal;
+  // for each link we have a set of possible goal locations;
+  std::map<std::string, std::vector<geometry_msgs::PoseStamped> > pose_targets_;
+
+  // common properties for goals
+  ActiveTargetType active_target_;
+  std::unique_ptr<moveit_msgs::Constraints> path_constraints_;
+  std::unique_ptr<moveit_msgs::TrajectoryConstraints> trajectory_constraints_;
+  std::string end_effector_link_;
+  std::string pose_reference_frame_;
+  std::string support_surface_;
+
+  // ROS communication
+  ros::Publisher trajectory_event_publisher_;
+  ros::Publisher attached_object_publisher_;
+  std::unique_ptr<moveit_warehouse::ConstraintsStorage> constraints_storage_;
+  std::unique_ptr<boost::thread> constraints_init_thread_;
+  bool initializing_constraints_;
 };
 }  // namespace planning_interface
 }  // namespace moveit

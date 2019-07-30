@@ -95,7 +95,6 @@ namespace moveit
 /** \brief Simple interface to MoveIt! components */
 namespace planning_interface
 {
-
 enum ActiveTargetType
 {
   JOINT,
@@ -192,11 +191,10 @@ public:
                         one will be constructed internally along with an internal TF2_ROS TransformListener
       \param wait_for_servers. Timeout for connecting to action servers. Zero time means unlimited waiting.
     */
-  MoveItCpp(const Options& opt,
-                     const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
-                     const ros::WallDuration& wait_for_servers = ros::WallDuration());
+  MoveItCpp(const Options& opt, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
+            const ros::WallDuration& wait_for_servers = ros::WallDuration());
   MOVEIT_DEPRECATED MoveItCpp(const Options& opt, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
-                                       const ros::Duration& wait_for_servers);
+                              const ros::Duration& wait_for_servers);
 
   /**
       \brief Construct a client for the MoveGroup action for a particular \e group.
@@ -206,10 +204,10 @@ public:
       \param wait_for_servers. Timeout for connecting to action servers. Zero time means unlimited waiting.
     */
   MoveItCpp(const std::string& group,
-                     const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
-                     const ros::WallDuration& wait_for_servers = ros::WallDuration());
+            const std::shared_ptr<tf2_ros::Buffer>& tf_buffer = std::shared_ptr<tf2_ros::Buffer>(),
+            const ros::WallDuration& wait_for_servers = ros::WallDuration());
   MOVEIT_DEPRECATED MoveItCpp(const std::string& group, const std::shared_ptr<tf2_ros::Buffer>& tf_buffer,
-                                       const ros::Duration& wait_for_servers);
+                              const ros::Duration& wait_for_servers);
 
   ~MoveItCpp();
 
